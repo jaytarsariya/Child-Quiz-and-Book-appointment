@@ -1,0 +1,6 @@
+get http://localhost:5000/staff/view
+Authorization: Bearer 
+
+###
+
+get http://localhost:3000/data
