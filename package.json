@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require ts-node/register test/api.spec.ts",
+    "test": "mocha --require ts-node/esm --experimental-specifier-resolution=node test/api.spec.ts",
     "start": "nodemon index.ts"
   },
   "keywords": [],

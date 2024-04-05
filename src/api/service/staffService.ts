@@ -1,10 +1,5 @@
 import { Op } from 'sequelize';
-import {
-  CanceledDTO,
-  bookAppointmentDTO,
-  createStaffDTO,
-  createStaffDTO1,
-} from '../../dto/Staffdto';
+import {CanceledDTO,bookAppointmentDTO,createStaffDTO,createStaffDTO1,} from '../../dto/Staffdto';
 import { UserStaff } from '../../models/staffUser';
 import { SiftStaff } from '../../models/siftStaff';
 import { myStaff } from '../../models/mystaff';
