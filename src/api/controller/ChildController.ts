@@ -97,8 +97,6 @@ export const LoginUser = async (req: Request, res: Response): Promise<any> => {
 export const CheckOTP = async (req: Request, res: Response): Promise<void> => {
   try {
     const detail: LoginDTO = req.body;
-    console.log(detail, 'poopopopopop');
-
     const data = await childservice.CheckOTP(detail);
     if (data === null) {
       res.status(404).json({ error: 'Invalid phone number pls try again !' });

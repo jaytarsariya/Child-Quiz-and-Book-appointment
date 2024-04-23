@@ -24,8 +24,4 @@ export class User extends Model{
 
   @HasMany(()=> Child)
   children!:Child[]
-
-
- 
-
 }

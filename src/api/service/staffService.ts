@@ -1,5 +1,10 @@
 import { Op } from 'sequelize';
-import {CanceledDTO,bookAppointmentDTO,createStaffDTO,createStaffDTO1,} from '../../dto/Staffdto';
+import {
+  CanceledDTO,
+  bookAppointmentDTO,
+  createStaffDTO,
+  createStaffDTO1,
+} from '../../dto/Staffdto';
 import { UserStaff } from '../../models/staffUser';
 import { SiftStaff } from '../../models/siftStaff';
 import { myStaff } from '../../models/mystaff';
@@ -479,7 +484,8 @@ export class StaffService {
       },
     });
     const amppingdata = await findappointment.rows.map((hello: any) => {
-      return { // FIND APPOINTMENT AND GO WITH THIS CODE AND GROW THIS CODE HOW MANY DAY TO CELEBRATE
+      return {
+        // FIND APPOINTMENT AND GO WITH THIS CODE AND GROW THIS CODE HOW MANY DAY TO CELEBRATE
         date: hello.date,
         startTime: hello.ustartTime,
         endTime: hello.uendTime,
