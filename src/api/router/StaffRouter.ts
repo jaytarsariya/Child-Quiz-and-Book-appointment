@@ -1,6 +1,7 @@
 // import express, { Router }  from "express";
 import { Router } from 'express';
 import {
+  findQuery,
   BookAppointment,
   CtreateStaff,
   DeleteExpiredAppointment,
@@ -20,6 +21,10 @@ import {
   updateMystaff,
 } from '../controller/StaffController';
 export const staffrouter = Router();
+
+staffrouter.get('/findQuery', findQuery);
+
+
 
 staffrouter.route('/create').post(CtreateStaff);
 

@@ -7,6 +7,48 @@ import {
   createStaffDTO1,
 } from '../../dto/Staffdto';
 const staffservice = new StaffService(); // intialize
+import {myStaff} from '../../models/mystaff';
+import {SiftStaff} from '../../models/siftStaff';
+
+
+export const findQuery = async(req:Request, res:Response)=>{
+  try{
+    // const data  = await myStaff.findAll({  // Find all Posts with their associated User:
+    //   include:[SiftStaff]
+    // })
+
+  //   const data = await myStaff.findAll({
+  //     include: [{
+  //         model: SiftStaff,
+  //         attributes: ['mystaffid', 'day']
+  //     }]
+  // });
+  
+//   const data = await myStaff.findByPk(1, {
+//     include: [SiftStaff]
+// });
+
+// const data = await SiftStaff.findAll({
+//   include: [myStaff]
+// });
+
+const data = await SiftStaff.findAll({
+  include: [{
+      model: myStaff,
+      where: {
+          name: 'staff1'
+      }
+  }]
+});
+
+
+
+    return res.status(200).json({data:data})
+  }catch(error){
+    return res.status(500).json({error: error.message})
+  }
+
+}
 
 // Create API
 export const CtreateStaff = async (
@@ -34,7 +76,9 @@ export const CtreateStaff = async (
 
 export const Showstaff = async (req: Request, res: Response): Promise<any> => {
   try {
-    const viewdata = await staffservice.Showstaff();
+    let id = req.query.id
+    const viewdata = await staffservice.Showstaff(Number(id));
+    console.log(viewdata)
     return res.status(200).json({ viewdata });
   } catch (error) {
     console.log(error, 'show staff error');
@@ -340,3 +384,5 @@ export const DeleteExpiredAppointment = async (
     res.status(404).json({ Error: 'Internal server error...' });
   }
 };
+
+

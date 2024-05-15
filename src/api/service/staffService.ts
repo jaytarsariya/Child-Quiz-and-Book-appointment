@@ -38,12 +38,12 @@ export class StaffService {
     }
   }
 
-  async Showstaff(): Promise<any> {
+  async Showstaff(id:number): Promise<any> {
     // const cachedData = nodeCache.get("mydata");
     // if (typeof cachedData === 'string') {
     //     return JSON.parse(cachedData);
     // }
-    const viewdata = await myStaff.findAll({
+    const viewdata = await myStaff.findOne({
       include: [SiftStaff],
     });
 
@@ -51,146 +51,237 @@ export class StaffService {
     return viewdata;
   }
 
-  async BookAppointment(data: bookAppointmentDTO): Promise<any> {
-    const current = new Date();
-    const userenterdate = new Date(data.date);
-    const usersatart = new Date(`${data.date}T${data.ustartTime}`);
-    const daysOfWeek = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-    ];
-    const day = userenterdate.getDay();
-    const myday = daysOfWeek[day];
+  // async BookAppointment(data: bookAppointmentDTO): Promise<any> {
+  //   const current = new Date();
+  //   const userenterdate = new Date(data.date);
+  //   const usersatart = new Date(`${data.date}T${data.ustartTime}`);
+  //   const daysOfWeek = [
+  //     'Sunday',
+  //     'Monday',
+  //     'Tuesday',
+  //     'Wednesday',
+  //     'Thursday',
+  //     'Friday',
+  //     'Saturday',
+  //   ];
+  //   const day = userenterdate.getDay();
+  //   const myday = daysOfWeek[day];
 
-    if (myday == 'Sunday') {
+  //   if (myday == 'Sunday') {
+  //     return 'sunday';
+  //   }
+     
+  //   if (current > usersatart) {
+  //     return 'timenot';
+  //   } else {
+  //     const availableStaff = await myStaff.findAll({
+  //       include: [
+  //         {
+  //           model: SiftStaff,
+  //           where: {
+  //             day: { [Op.eq]: myday },
+  //             startTime: { [Op.lte]: data.ustartTime },
+  //             endTime: { [Op.gte]: data.uendTime },
+  //           },
+  //         },
+  //       ],
+  //     });
+  //     if (availableStaff.length > 0) {
+  //       const mystaffmap = availableStaff.map((staff) => staff.id);
+
+  //       for (const staffId of mystaffmap) {
+  //         const isAlreadyBooked = await UserStaff.findOne({
+  //           where: {
+  //             date: data.date,
+  //             ustartTime: data.ustartTime,
+  //             uendTime: data.uendTime,
+  //             staffid: staffId,
+  //           },
+  //         });
+  //         if (!isAlreadyBooked) {
+  //           const finduser = await sUser.findOne({
+  //             where: {
+  //               name: data.name,
+  //               phone: data.phone,
+  //             },
+  //           });
+
+  //           if (finduser) {
+  //             const newAppointment = await UserStaff.create({
+  //               date: data.date,
+  //               ustartTime: data.ustartTime,
+  //               uendTime: data.uendTime,
+  //               userid: finduser.id,
+  //               staffid: staffId,
+  //               day: myday,
+  //             });
+
+  //             const message = {
+  //               message: `Appointment booked for ${newAppointment.date} On ${newAppointment.day} at ${newAppointment.ustartTime} to ${newAppointment.uendTime} with staff_${staffId} Existing User...`,
+  //             };
+
+  //             return message;
+  //           } else {
+  //             //  ................... New User ........................
+
+  //             let UserCreated = await sUser.create({
+  //               name: data.name,
+  //               phone: data.phone,
+  //             });
+
+  //             const newAppointment = await UserStaff.create({
+  //               date: data.date,
+  //               ustartTime: data.ustartTime,
+  //               uendTime: data.uendTime,
+  //               userid: UserCreated.id,
+  //               staffid: staffId,
+  //               day: myday,
+  //             });
+
+  //             const message = {
+  //               Success: true,
+  //               Date: newAppointment.date,
+  //               StartTime: newAppointment.ustartTime,
+  //               EndTime: newAppointment.uendTime,
+  //               staff: newAppointment.staffid,
+  //               Day: newAppointment.day,
+  //             };
+
+  //             return message;
+  //           }
+  //         } else {
+  //           if (isAlreadyBooked.isCanceled === true) {
+  //             const checkuser = await sUser.findOne({
+  //               where: {
+  //                 name: data.name,
+  //                 phone: data.phone,
+  //               },
+  //             });
+
+  //             if (checkuser) {
+  //               await UserStaff.update(
+  //                 { userid: checkuser.id, isCanceled: false },
+  //                 { where: { id: isAlreadyBooked.id } }
+  //               );
+  //               const message = {
+  //                 message: `Appointment booked for ${isAlreadyBooked.date} at ${isAlreadyBooked.ustartTime} to ${isAlreadyBooked.uendTime} with staff_${staffId} updateded data..existing...;`,
+  //               };
+  //               return message;
+  //             } else {
+  //               const createnew = await sUser.create({
+  //                 name: data.name,
+  //                 phone: data.phone,
+  //               });
+
+  //               await UserStaff.update(
+  //                 { userid: createnew.id, isCanceled: false },
+  //                 { where: { id: isAlreadyBooked.id } }
+  //               );
+
+  //               const message = {
+  //                 message: `Appointment booked for ${isAlreadyBooked.date} at ${isAlreadyBooked.ustartTime} to ${isAlreadyBooked.uendTime} with staff_${staffId} new user .....cancel ap. book`,
+  //               };
+  //               return message;
+  //             }
+  //           }
+  //         }
+  //       }
+  //     } else {
+  //       return 'notAvailable';
+  //     }
+  //   }
+  // }
+
+  async BookAppointment(data:bookAppointmentDTO): Promise<any> {
+    const current = new Date();
+    const userEnterDate = new Date(data.date);
+    const userStartTime = new Date(`${data.date}T${data.ustartTime}`);
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const day = userEnterDate.getDay();
+    const myDay = daysOfWeek[day];
+  
+    if (myDay === 'Sunday') {
       return 'sunday';
     }
-
-    if (current > usersatart) {
+  
+    if (current > userStartTime) {
       return 'timenot';
-    } else {
-      const availableStaff = await myStaff.findAll({
-        include: [
-          {
-            model: SiftStaff,
-            where: {
-              day: { [Op.eq]: myday },
-              startTime: { [Op.lte]: data.ustartTime },
-              endTime: { [Op.gte]: data.uendTime },
-            },
+    }
+  
+    const availableStaff = await myStaff.findAll({
+      include: [
+        {
+          model: SiftStaff,
+          where: {
+            day: { [Op.eq]: myDay },
+            startTime: { [Op.lte]: data.ustartTime },
+            endTime: { [Op.gte]: data.uendTime },
           },
-        ],
+        },
+      ],
+    });
+  
+    if (availableStaff.length === 0) {
+      return 'notAvailable';
+    }
+  
+    for (const staff of availableStaff) {
+      const isAlreadyBooked = await UserStaff.findOne({
+        where: {
+          date: data.date,
+          ustartTime: data.ustartTime,
+          uendTime: data.uendTime,
+          staffid: staff.id,
+        },
       });
-      if (availableStaff.length > 0) {
-        const mystaffmap = availableStaff.map((staff) => staff.id);
-
-        for (const staffId of mystaffmap) {
-          const isAlreadyBooked = await UserStaff.findOne({
+  
+      if (!isAlreadyBooked) {
+        const user = await sUser.findOne({
+          where: {
+            name: data.name,
+            phone: data.phone,
+          },
+        });
+  
+        const userId = user ? user.id : (await sUser.create({ name: data.name, phone: data.phone })).id;
+        console.log("🚀 ~ StaffService ~ BookAppointment ~ userId---=--=:", userId)
+  
+        const newAppointment = await UserStaff.create({
+          date: data.date,
+          ustartTime: data.ustartTime,
+          uendTime: data.uendTime,
+          userid: userId,
+          staffid: staff.id,
+          day: myDay,
+        });
+  
+        return {
+          message: `Appointment booked for ${newAppointment.date} on ${newAppointment.day} at ${newAppointment.ustartTime} to ${newAppointment.uendTime} with staff_${staff.id} Existing User...`,
+        };
+      } else {
+        if (isAlreadyBooked.isCanceled === true) {
+          const user = await sUser.findOne({
             where: {
-              date: data.date,
-              ustartTime: data.ustartTime,
-              uendTime: data.uendTime,
-              staffid: staffId,
+              name: data.name,
+              phone: data.phone,
             },
           });
-          if (!isAlreadyBooked) {
-            const finduser = await sUser.findOne({
-              where: {
-                name: data.name,
-                phone: data.phone,
-              },
-            });
-
-            if (finduser) {
-              const newAppointment = await UserStaff.create({
-                date: data.date,
-                ustartTime: data.ustartTime,
-                uendTime: data.uendTime,
-                userid: finduser.id,
-                staffid: staffId,
-                day: myday,
-              });
-
-              const message = {
-                message: `Appointment booked for ${newAppointment.date} On ${newAppointment.day} at ${newAppointment.ustartTime} to ${newAppointment.uendTime} with staff_${staffId} Existing User...`,
-              };
-
-              return message;
-            } else {
-              //  ................... New User ........................
-
-              let UserCreated = await sUser.create({
-                name: data.name,
-                phone: data.phone,
-              });
-
-              const newAppointment = await UserStaff.create({
-                date: data.date,
-                ustartTime: data.ustartTime,
-                uendTime: data.uendTime,
-                userid: UserCreated.id,
-                staffid: staffId,
-                day: myday,
-              });
-
-              const message = {
-                Success: true,
-                Date: newAppointment.date,
-                StartTime: newAppointment.ustartTime,
-                EndTime: newAppointment.uendTime,
-                staff: newAppointment.staffid,
-                Day: newAppointment.day,
-              };
-
-              return message;
-            }
-          } else {
-            if (isAlreadyBooked.isCanceled === true) {
-              const checkuser = await sUser.findOne({
-                where: {
-                  name: data.name,
-                  phone: data.phone,
-                },
-              });
-
-              if (checkuser) {
-                await UserStaff.update(
-                  { userid: checkuser.id, isCanceled: false },
-                  { where: { id: isAlreadyBooked.id } }
-                );
-                const message = {
-                  message: `Appointment booked for ${isAlreadyBooked.date} at ${isAlreadyBooked.ustartTime} to ${isAlreadyBooked.uendTime} with staff_${staffId} updateded data..existing...;`,
-                };
-                return message;
-              } else {
-                const createnew = await sUser.create({
-                  name: data.name,
-                  phone: data.phone,
-                });
-
-                await UserStaff.update(
-                  { userid: createnew.id, isCanceled: false },
-                  { where: { id: isAlreadyBooked.id } }
-                );
-
-                const message = {
-                  message: `Appointment booked for ${isAlreadyBooked.date} at ${isAlreadyBooked.ustartTime} to ${isAlreadyBooked.uendTime} with staff_${staffId} new user .....cancel ap. book`,
-                };
-                return message;
-              }
-            }
-          }
+  
+          const userId = user ? user.id : (await sUser.create({ name: data.name, phone: data.phone })).id;
+  
+          await UserStaff.update(
+            { userid: userId, isCanceled: false },
+            { where: { id: isAlreadyBooked.id } }
+          );
+  
+          return {
+            message: `Appointment booked for ${isAlreadyBooked.date} at ${isAlreadyBooked.ustartTime} to ${isAlreadyBooked.uendTime} with staff_${staff.id}`,
+          };
         }
-      } else {
-        return 'notAvailable';
       }
     }
   }
+  
 
   async Fetchbookedstaff(id: number): Promise<any> {
     const cachedData = nodeCache.get('bookedData');
@@ -631,3 +722,8 @@ export class StaffService {
     return bookdata;
   }
 }
+
+
+
+
+
